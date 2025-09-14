@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 file
+=======
+"Hello World"
+>>>>>>> a2ae0f6404e9ee9a5bc0e1c8460bef6c82c0657a
