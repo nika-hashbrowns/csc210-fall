@@ -1,69 +1,55 @@
-package lab-03;
-
 public class casino {
     
 }
 
-class Casino {
-    private String name;
-    private int totalGamesPlayed;
-    private double totalEarnings;
+class Customer {
+    private String wallet;
 
-    public Casino(String name) {
-        this.name = name;
-        this.totalGamesPlayed = 0;
-        this.totalEarnings = 0.0;
+    public Customer(String wallet) {
+        this.wallet = wallet;
     }
-
-    public String getName() {
-        return name;
+    public String getWallet() {
+        return wallet;
     }
-
-    public int getTotalGamesPlayed() {
-        return totalGamesPlayed;
+    public void setWallet(String wallet) {
+        this.wallet = wallet;
     }
-
-    public double getTotalEarnings() {
-        return totalEarnings;
+    
+    public double walletAmount() {
+        return 0.0;
     }
-
-    public void recordGame(double earnings) {
-        totalGamesPlayed++;
-        totalEarnings += earnings;
+    public double receive(){
+        return 0.0;
     }
-}
+    public double checkWallet(){
+        return 0.0; 
+    }
+}   
 
 class SlotMachine {
-    private String name;
-    private double payoutPercentage;
-
-    public SlotMachine(String name, double payoutPercentage) {
-        this.name = name;
-        this.payoutPercentage = payoutPercentage;
+String[] symbols = {"smiley face", "heart", "seven 7"};
+double moneyPot = 1000000.00; 
+double pulllever(){
+    return 0.0;
     }
-
-    public String getName() {
-        return name;
-    }
-
-    public double getPayoutPercentage() {
-        return payoutPercentage;
-    }
-
-    public double play(double betAmount) {
-        // Simulate a slot machine play
-        double winnings = betAmount * (payoutPercentage / 100);
-        return winnings - betAmount; // Return net earnings (winnings - bet)
-    }
+public String toString(){
+    return "smiley face" + "heart" + "seven 7";
 }
 
-class GoodCasino extends Casino {
-    public GoodCasino(String name) {
-        super(name);
+public double getMoneyPot() {
+        return moneyPot;
     }
 
-    @Override
-    public void recordGame(double earnings) {
-        super.recordGame(earnings * 1.1); // Good casino gives a 10% bonus on earnings
+}
+
+class GoodCasino{
+    SlotMachine slotMachine = new SlotMachine();
+    Customer customer = new Customer("100.00");
+    double checkWallet(){
+        return 0.0; 
     }
+    public static double play(Customer customer, SlotMachine machine, double amount) {
+        return 0.0;
+    }
+
 }
