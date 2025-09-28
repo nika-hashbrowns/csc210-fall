@@ -7,6 +7,15 @@ public class ProcessCreatureFile {
     private final List<Creature> creatures = new ArrayList<>();
     private final String filename;
 
+    public ProcessCreatureFile() {
+        this("creatures.txt");
+        creatures.add(new Creature("Mark"));
+        creatures.add(new Creature("Alice"));
+        creatures.add(new Creature("Foxy"));
+        creatures.add(new Creature("Monty"));
+        creatures.add(new Creature("Rex"));
+    }
+
     public ProcessCreatureFile(String filename) {
         this.filename = filename;
         loadFromFile();
@@ -14,6 +23,12 @@ public class ProcessCreatureFile {
 
     public int getCreatureCount() {
         return creatures.size();
+    }
+
+    public void printAllCreatureNames() {
+        for (Creature c : creatures) {
+            System.out.println(c.getName());
+        }
     }
 
     public void modifyCreature(int index, String newName) {
@@ -52,21 +67,10 @@ public class ProcessCreatureFile {
         }
     }
 
-    
-    
-    public ProcessCreatureFile() {
-    this.filename = "creatures.txt";
-    creatures.add(new Creature("Mark"));
-    creatures.add(new Creature("Alice"));
-    creatures.add(new Creature("Foxy"));
-    creatures.add(new Creature("Monty"));
-    creatures.add(new Creature("Rex"));
-
-String name = creatures.get(0).getName();
-System.out.println(name);
-    }
-     public static void main(String[] args) {
-        new ProcessCreatureFile();
+    public static void main(String[] args) {
+        ProcessCreatureFile pcf = new ProcessCreatureFile();
+        System.out.println("Creature count: " + pcf.getCreatureCount());
+        pcf.printAllCreatureNames();
     }
 }
 
@@ -85,4 +89,3 @@ class Creature {
         this.name = name;
     }
 }
-
