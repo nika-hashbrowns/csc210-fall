@@ -9,11 +9,12 @@ public class ProcessCreatureFile {
 
     public ProcessCreatureFile() {
         this("creatures.txt");
-        creatures.add(new Creature("Mark"));
-        creatures.add(new Creature("Alice"));
-        creatures.add(new Creature("Foxy"));
-        creatures.add(new Creature("Monty"));
-        creatures.add(new Creature("Rex"));
+        creatures.add(new Creature("Mark", 120.0, "Blue"));
+        creatures.add(new Creature("Alice", 100.0, "Pink"));
+        creatures.add(new Creature("Foxy", 80.0, "Red"));
+        creatures.add(new Creature("Monty", 200.0, "Green"));
+        creatures.add(new Creature("Rex", 500.0, "Brown"));
+
     }
 
     public ProcessCreatureFile(String filename) {
@@ -32,7 +33,7 @@ public class ProcessCreatureFile {
     }
 
     public void modifyCreature(int index, String newName) {
-        creatures.set(index, new Creature(newName));
+        creatures.set(index, new Creature(newName, index, newName));
     }
 
     public void deleteCreature(int index) {
@@ -40,7 +41,7 @@ public class ProcessCreatureFile {
     }
 
     public void addCreature(String name) {
-        creatures.add(new Creature(name));
+        creatures.add(new Creature(name, 0.0, "unknown")); // match (String,double,String)
     }
 
     public void saveToFile() {
@@ -54,38 +55,14 @@ public class ProcessCreatureFile {
     }
 
     private void loadFromFile() {
-        File file = new File(filename);
-        if (!file.exists()) return;
-
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
             String line;
             while ((line = br.readLine()) != null) {
-                creatures.add(new Creature(line.trim()));
+                Creature c = Creature.fromCSV(line.trim()); // use the parsing helper
+                if (c != null) creatures.add(c);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public static void main(String[] args) {
-        ProcessCreatureFile pcf = new ProcessCreatureFile();
-        System.out.println("Creature count: " + pcf.getCreatureCount());
-        pcf.printAllCreatureNames();
-    }
-}
-
-class Creature {
-    private String name;
-
-    public Creature(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 }
