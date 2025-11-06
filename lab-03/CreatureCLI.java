@@ -1,4 +1,9 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class CreatureCLI {
+    private final List<Creature> creatures = new ArrayList<>();
+
     public static void main(String[] args) {
         if (args.length < 2) {
             printHelp();
@@ -56,7 +61,7 @@ public class CreatureCLI {
 
         for (String part : parts) {
             String[] kv = part.split(":", 2);
-            if (kv.length == 2); {
+            if (kv.length == 2) {        // removed stray semicolon
                 switch (kv[0].toLowerCase()) {
                     case "name":
                         name = kv[1];
@@ -73,11 +78,31 @@ public class CreatureCLI {
         return new Creature(name, weight, color);
     }
 
+
+    public Creature getCreature(int index) {
+    return creatures.get(index);
+}
+
+public void updateCreature(int index, Creature updated) {
+    creatures.set(index, updated);
+}
+
+
     private static void printHelp() {
         System.out.println("Usage:");
         System.out.println("  java CreatureCLI create 'name:dragon weight:500 color:green'");
         System.out.println("  java CreatureCLI read <index>");
         System.out.println("  java CreatureCLI update <index> 'name:phoenix weight:12 color:orange'");
         System.out.println("  java CreatureCLI delete <index>");
+    }
+
+public void addCreature(Creature creature) {
+    creatures.add(creature);
+}
+
+
+    // Optional: constructor that accepts an initial list
+    public CreatureCLI(List<Creature> initial) {
+        if (initial != null) this.creatures.addAll(initial);
     }
 }
