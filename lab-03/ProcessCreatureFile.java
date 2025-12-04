@@ -7,19 +7,19 @@ public class ProcessCreatureFile {
     private final List<Creature> creatures = new ArrayList<>();
     private final String filename;
 
+    // No-arg constructor delegates to filename constructor
     public ProcessCreatureFile() {
         this("creatures.txt");
-        creatures.add(new Creature("Mark", 120.0, "Blue"));
-        creatures.add(new Creature("Alice", 100.0, "Pink"));
-        creatures.add(new Creature("Foxy", 80.0, "Red"));
-        creatures.add(new Creature("Monty", 200.0, "Green"));
-        creatures.add(new Creature("Rex", 500.0, "Brown"));
-
     }
 
     public ProcessCreatureFile(String filename) {
         this.filename = filename;
         loadFromFile();
+    }
+
+    // Return the live list (GUI code expects to iterate / read it)
+    public List<Creature> getCreatures() {
+        return creatures;
     }
 
     public int getCreatureCount() {
@@ -32,22 +32,53 @@ public class ProcessCreatureFile {
         }
     }
 
+    // Add by object and persist
+    public void addCreature(Creature c) {
+        creatures.add(c);
+        saveToFile();
+    }
+
+    // Convenience add by name
+    public void addCreature(String name) {
+        creatures.add(new Creature(name, 0.0, "unknown"));
+        saveToFile();
+    }
+
+    // Replace creature at index with a new one (keeps weight/color if only changing name)
     public void modifyCreature(int index, String newName) {
-        creatures.set(index, new Creature(newName, index, newName));
+        if (index < 0 || index >= creatures.size())
+            throw new IndexOutOfBoundsException("Invalid index: " + index);
+        Creature old = creatures.get(index);
+        creatures.set(index, new Creature(newName, old.getWeight(), old.getColor()));
+        saveToFile();
+    }
+
+    // Replace whole Creature
+    public void updateCreature(int index, Creature updated) {
+        if (index < 0 || index >= creatures.size())
+            throw new IndexOutOfBoundsException("Invalid index: " + index);
+        creatures.set(index, updated);
+        saveToFile();
+    }
+
+    public Creature getCreature(int index) {
+        if (index < 0 || index >= creatures.size())
+            throw new IndexOutOfBoundsException("Invalid index: " + index);
+        return new Creature(creatures.get(index)); // return copy
     }
 
     public void deleteCreature(int index) {
+        if (index < 0 || index >= creatures.size())
+            throw new IndexOutOfBoundsException("Invalid index: " + index);
         creatures.remove(index);
-    }
-
-    public void addCreature(String name) {
-        creatures.add(new Creature(name, 0.0, "unknown")); // match (String,double,String)
+        saveToFile();
     }
 
     public void saveToFile() {
         try (PrintWriter pw = new PrintWriter(new FileWriter(filename))) {
             for (Creature c : creatures) {
-                pw.println(c.getName());
+                // write as CSV: name,weight,color
+                pw.println(c.getName() + "," + c.getWeight() + "," + c.getColor());
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -55,11 +86,30 @@ public class ProcessCreatureFile {
     }
 
     private void loadFromFile() {
-        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+        creatures.clear();
+        File f = new File(filename);
+        if (!f.exists()) return; // nothing to load
+
+        try (BufferedReader br = new BufferedReader(new FileReader(f))) {
             String line;
             while ((line = br.readLine()) != null) {
-                Creature c = Creature.fromCSV(line.trim()); // use the parsing helper
-                if (c != null) creatures.add(c);
+                line = line.trim();
+                if (line.isEmpty()) continue;
+                // expect CSV: name,weight,color
+                String[] parts = line.split(",", -1);
+                String name = parts.length > 0 ? parts[0].trim() : "";
+                double weight = 0.0;
+                String color = parts.length > 2 ? parts[2].trim() : "unknown";
+                if (parts.length > 1 && !parts[1].trim().isEmpty()) {
+                    try {
+                        weight = Double.parseDouble(parts[1].trim());
+                    } catch (NumberFormatException ex) {
+                        // keep default weight = 0.0
+                    }
+                }
+                if (!name.isEmpty()) {
+                    creatures.add(new Creature(name, weight, color));
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
