@@ -10,14 +10,14 @@ public class Creature {
         this.color = color;
     }
 
-    // Copy constructor — note the parameter (Creature other)
+    // Copy constructor
     public Creature(Creature other) {
         this.name = other.name;
         this.weight = other.weight;
         this.color = other.color;
     }
 
-    // Optional single-argument constructor
+    // Optional name-only constructor
     public Creature(String name) {
         this(name, 0.0, "unknown");
     }
@@ -41,15 +41,16 @@ public class Creature {
     public static Creature fromCSV(String csvLine) {
         String[] parts = csvLine.split(",");
         if (parts.length != 3) return null;
+
         String name = parts[0].trim();
         double weight = Double.parseDouble(parts[1].trim());
         String color = parts[2].trim();
+
         return new Creature(name, weight, color);
     }
 
     @Override
     public String toString() {
-        return String.format("Creature{name='%s', weight=%.2f, color='%s'}",
-                name, weight, color);
+        return "Creature{name='" + name + "', weight=" + weight + ", color='" + color + "'}";
     }
 }

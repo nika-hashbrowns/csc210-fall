@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.util.ArrayList;
 
 public class CreaturesFromFileGUI {
@@ -17,27 +16,29 @@ public class CreaturesFromFileGUI {
     private JTextArea displayArea;
 
     private void createAndShowGUI() {
-        // Load creatures from file
+
+        // ===== Load creatures from file =====
         fileProcessor = new ProcessCreatureFile("creatures.txt");
-        creatures = fileProcessor.getCreatures();
+        creatures = fileProcessor.loadCreatures();
 
         JFrame frame = new JFrame("Creatures From File Editor");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(900, 600);
         frame.setLayout(new BorderLayout(10, 10));
 
-        // ===== LEFT SIDE: Creature List =====
+        // ===== LEFT: List of creatures =====
         listModel = new DefaultListModel<>();
         for (Creature c : creatures) listModel.addElement(c.getName());
 
         creatureList = new JList<>(listModel);
         creatureList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        JScrollPane listScrollPane = new JScrollPane(creatureList);
-        listScrollPane.setPreferredSize(new Dimension(200, 400));
-        listScrollPane.setBorder(BorderFactory.createTitledBorder("Creature List"));
 
-        // ===== RIGHT SIDE: Edit & Info =====
-        JPanel editPanel = new JPanel(new GridLayout(4, 2, 10, 10));
+        JScrollPane listScroll = new JScrollPane(creatureList);
+        listScroll.setPreferredSize(new Dimension(200, 400));
+        listScroll.setBorder(BorderFactory.createTitledBorder("Creature List"));
+
+        // ===== MIDDLE: Edit panel =====
+        JPanel editPanel = new JPanel(new GridLayout(3, 2, 10, 10));
         editPanel.setBorder(BorderFactory.createTitledBorder("Edit Creature"));
 
         nameField = new JTextField();
@@ -51,6 +52,13 @@ public class CreaturesFromFileGUI {
         editPanel.add(new JLabel("Color:"));
         editPanel.add(colorField);
 
+        // ===== RIGHT: Display Area =====
+        displayArea = new JTextArea(12, 40);
+        displayArea.setEditable(false);
+        JScrollPane displayScroll = new JScrollPane(displayArea);
+        displayScroll.setBorder(BorderFactory.createTitledBorder("Creature Details"));
+
+        // ===== Buttons =====
         JButton saveButton = new JButton("Save Changes");
         JButton addButton = new JButton("Add Creature");
         JButton removeButton = new JButton("Remove Creature");
@@ -62,25 +70,23 @@ public class CreaturesFromFileGUI {
         buttonPanel.add(removeButton);
         buttonPanel.add(growlButton);
 
-        displayArea = new JTextArea(10, 30);
-        displayArea.setEditable(false);
-        JScrollPane displayScroll = new JScrollPane(displayArea);
-        displayScroll.setBorder(BorderFactory.createTitledBorder("Creature Details"));
-
+        // ===== Right combined panel =====
         JPanel rightPanel = new JPanel(new BorderLayout());
         rightPanel.add(editPanel, BorderLayout.NORTH);
         rightPanel.add(displayScroll, BorderLayout.CENTER);
         rightPanel.add(buttonPanel, BorderLayout.SOUTH);
 
-        // ===== Combine Panels =====
-        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, listScrollPane, rightPanel);
+        // ===== Split Pane =====
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, listScroll, rightPanel);
         splitPane.setDividerLocation(200);
-        splitPane.setResizeWeight(0.2);
+
         frame.add(splitPane, BorderLayout.CENTER);
 
-        // ===== Behavior =====
+        // =====================================================
+        // EVENT HANDLERS
+        // =====================================================
 
-        // Show creature details when selected
+        // List selection
         creatureList.addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 int index = creatureList.getSelectedIndex();
@@ -94,60 +100,69 @@ public class CreaturesFromFileGUI {
             }
         });
 
-        // Save button updates creature
+        // SAVE CHANGES
         saveButton.addActionListener(e -> {
             int index = creatureList.getSelectedIndex();
             if (index >= 0) {
                 try {
-                    String newName = nameField.getText();
-                    double newWeight = Double.parseDouble(weightField.getText());
-                    String newColor = colorField.getText();
+                    String n = nameField.getText();
+                    double w = Double.parseDouble(weightField.getText());
+                    String col = colorField.getText();
 
-                    fileProcessor.updateCreature(index, new Creature(newName, newWeight, newColor));
-                    creatures = fileProcessor.getCreatures();
+                    Creature updated = new Creature(n, w, col);
 
-                    listModel.set(index, newName);
-                    displayArea.setText(creatures.get(index).toString());
+                    creatures.set(index, updated);
+                    listModel.set(index, n);
+
+                    fileProcessor.saveCreatures(creatures);
+
+                    displayArea.setText(updated.toString());
+
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(frame, "Invalid input.");
                 }
             }
         });
 
-        // Add button creates new creature
+        // ADD NEW CREATURE
         addButton.addActionListener(e -> {
             try {
-                String name = nameField.getText();
-                double weight = Double.parseDouble(weightField.getText());
-                String color = colorField.getText();
+                String n = nameField.getText();
+                double w = Double.parseDouble(weightField.getText());
+                String c = colorField.getText();
 
-                Creature newC = new Creature(name, weight, color);
-                fileProcessor.addCreature(newC);
-                creatures = fileProcessor.getCreatures();
+                Creature newCreature = new Creature(n, w, c);
 
-                listModel.addElement(newC.getName());
-                displayArea.setText("Added: " + newC);
+                creatures.add(newCreature);
+                listModel.addElement(n);
+
+                fileProcessor.saveCreatures(creatures);
+
+                displayArea.setText("Added: " + newCreature);
+
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(frame, "Invalid input.");
             }
         });
 
-        // Remove button deletes selected creature
+        // REMOVE SELECTED CREATURE
         removeButton.addActionListener(e -> {
             int index = creatureList.getSelectedIndex();
             if (index >= 0) {
-                fileProcessor.deleteCreature(index);
-                creatures = fileProcessor.getCreatures();
-
+                creatures.remove(index);
                 listModel.remove(index);
+
+                fileProcessor.saveCreatures(creatures);
+
                 displayArea.setText("Creature removed.");
+
                 nameField.setText("");
                 weightField.setText("");
                 colorField.setText("");
             }
         });
 
-        // Growl button
+        // GROWL BUTTON
         growlButton.addActionListener(e -> {
             int index = creatureList.getSelectedIndex();
             if (index >= 0) {
@@ -159,4 +174,3 @@ public class CreaturesFromFileGUI {
         frame.setVisible(true);
     }
 }
-
