@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry excluding="Testing/src/test/|Maven/doc-demo/src/main/java/|Documentation/src/|Maven/simple-maven-project/src/main/java/|Maven/library-catalog/src/test/java/|Maven/doc-demo/src/test/java/|Testing/src/main/|Maven/multi-file-maven/src/main/java/|Object-Oriented-Tic-Tac-Toe/|Packages/app/|Maven/calculator-client/src/main/java/|Generics/|SimpleJavadocDemo/src/|Maven/library-catalog/src/main/java/|Packages/util/|Testing/src/myprog/|Packages/math/" kind="src" path=""/>
+	<classpathentry kind="src" path="Documentation/src"/>
+	<classpathentry kind="src" path="Generics"/>
+	<classpathentry kind="src" path="Maven/calculator-client/src/main/java"/>
+	<classpathentry kind="src" path="Maven/doc-demo/src/main/java"/>
+	<classpathentry kind="src" path="Maven/doc-demo/src/test/java"/>
+	<classpathentry kind="src" path="Maven/library-catalog/src/main/java"/>
+	<classpathentry kind="src" path="Maven/library-catalog/src/test/java"/>
+	<classpathentry kind="src" path="Maven/multi-file-maven/src/main/java"/>
+	<classpathentry kind="src" path="Maven/simple-maven-project/src/main/java"/>
+	<classpathentry kind="src" path="Object-Oriented-Tic-Tac-Toe"/>
+	<classpathentry kind="src" path="Packages/app"/>
+	<classpathentry kind="src" path="Packages/math"/>
+	<classpathentry kind="src" path="Packages/util"/>
+	<classpathentry kind="src" path="SimpleJavadocDemo/src"/>
+	<classpathentry kind="src" path="Testing/src/main"/>
+	<classpathentry kind="src" path="Testing/src/myprog"/>
+	<classpathentry kind="src" path="Testing/src/test"/>
+	<classpathentry kind="output" path="Documentation/bin"/>
+</classpath>
